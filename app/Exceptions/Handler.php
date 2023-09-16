@@ -36,7 +36,7 @@ class Handler extends ExceptionHandler
         if( $e instanceof AccessDeniedHttpException && $request->wantsJson()){
             return response()->json(["message" => "access denied"], 403);
         }
-        
+
         if( $e instanceof ModelNotFoundException && $request->wantsJson()){
             return response()->json(["message" => "page not found"], 404);
         }
