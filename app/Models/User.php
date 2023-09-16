@@ -11,7 +11,9 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens,
+        HasFactory,
+        Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -52,5 +54,16 @@ class User extends Authenticatable
     public function notes(): HasMany
     {
         return $this->hasMany(Note::class);
+    }
+
+    /**
+     * Method to find user by email
+     * @param string $email
+     *
+     * @return User
+    */
+    public static function findByEmail(string $email): User
+    {
+        return self::whereEmail($email)->first();
     }
 }
