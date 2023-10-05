@@ -24,7 +24,17 @@ class NoteResource extends JsonResource
                 'slug' => $this->resource->slug,
                 'is_favorite' => (bool)$this->resource->favorite,
                 'created_at' => $this->resource->created_at
+            ],
+            'links' => [
+                'self' => route('api.notes.show', $this->resource)
             ]
         ];
+    }
+
+    public function toResponse($request)
+    {
+        return parent::toResponse($request)->withHeaders([
+            'Location' => route('api.notes.show', $this->resource)
+        ]);
     }
 }

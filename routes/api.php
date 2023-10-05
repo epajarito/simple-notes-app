@@ -28,5 +28,7 @@ Route::prefix('auth')->group(function (){
    Route::post("register", RegisterController::class)->name('auth.register');
 });
 
-Route::apiResource('notes', NoteController::class)
-    ->middleware('auth:sanctum');
+//Route::apiResource('notes', NoteController::class)
+//    ->middleware('auth:sanctum');
+
+Route::apiResource('notes', NoteController::class)->names('api.notes');

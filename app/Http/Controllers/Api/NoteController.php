@@ -19,10 +19,12 @@ class NoteController extends Controller
      */
     public function index(IndexRequest $request)
     {
-        $notes = Note::query()
-            ->whereBelongsTo(auth()->user())
-            ->latest()
-            ->paginate();
+//        $notes = Note::query()
+//            ->whereBelongsTo(auth()->user())
+//            ->latest()
+//            ->paginate();
+
+        $notes = Note::all();
 
         return NoteCollection::make($notes);
     }
@@ -32,7 +34,11 @@ class NoteController extends Controller
      */
     public function store(StoreRequest $request)
     {
-        $note = Note::create($request->validated());
+        $note = Note::create([
+            'title' => $request->input('data.attributes.title'),
+            'content' => $request->input('data.attributes.content'),
+            'slug' => $request->input('data.attributes.slug'),
+        ]);
 
         return new NoteResource($note);
     }
@@ -42,7 +48,7 @@ class NoteController extends Controller
      */
     public function show(Note $note)
     {
-        $this->authorize('view', $note);
+//        $this->authorize('view', $note);
         return new NoteResource($note);
     }
 
@@ -51,7 +57,7 @@ class NoteController extends Controller
      */
     public function update(UpdateRequest $request, Note $note)
     {
-        $this->authorize('update', $note);
+//        $this->authorize('update', $note);
         $note->update($request->validated());
 
         return new NoteResource($note);
@@ -62,7 +68,7 @@ class NoteController extends Controller
      */
     public function destroy(Note $note)
     {
-        $this->authorize('delete', $note);
+//        $this->authorize('delete', $note);
         $note->delete();
 
         return response()->noContent();

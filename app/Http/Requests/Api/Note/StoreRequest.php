@@ -12,7 +12,8 @@ class StoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->check();
+//        return auth()->check();
+        return true;
     }
 
     /**
@@ -23,11 +24,11 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:155',
-            'slug' => 'nullable|string',
-            'content' => 'required|string|max:255',
-            'favorite' => 'nullable|int',
-            'user_id' => 'nullable',
+            'data.attributes.title' => 'required|string|max:110',
+            'data.attributes.slug' => 'required|string',
+            'data.attributes.content' => 'required|string|max:255',
+            'data.attributes.favorite' => 'nullable|int|bool',
+            'data.attributes.user_id' => 'nullable',
         ];
     }
 
@@ -43,4 +44,8 @@ class StoreRequest extends FormRequest
             'slug' => $slug
         ]);
     }
+//    public function validated($key = null, $default = null)
+//    {
+//        return parent::validated($key, $default);
+//    }
 }
