@@ -9,14 +9,10 @@ it("can create note", function (){
     $response = \Pest\Laravel\postJson(
         route('api.notes.store'),
         [
-            'data' => [
-                'attributes' => [
-                    'title' => $title = "mi titulo",
-                    'slug' => str($title)->slug()->toString(),
-                    'content' => "mi contenido",
-                    'favorite' => 1
-                ]
-            ]
+            'title' => $title = "mi titulo",
+            'slug' => str($title)->slug()->toString(),
+            'content' => "mi contenido",
+            'favorite' => 1
         ]
     )
         ->assertCreated()
@@ -50,34 +46,23 @@ it("can create note", function (){
 });
 
 it("can not create note title attribute is required", function (){
-    $response = \Pest\Laravel\postJson(
+    \Pest\Laravel\postJson(
         route('api.notes.store'),
         [
-            'data' => [
-                'attributes' => [
-                    'slug' => 'mi-nota',
-                    'content' => "mi contenido",
-                    'favorite' => 1
-                ]
-            ]
+            'slug' => 'mi-nota',
+            'content' => "mi contenido",
+            'favorite' => 1
         ]
-    );
-
-
-    $response->assertJsonApiValidationErrors('title');
+    )->assertJsonApiValidationErrors('title');
 });
 
 it("can not create note slug attribute is required", function (){
     \Pest\Laravel\postJson(
         route('api.notes.store'),
         [
-            'data' => [
-                'attributes' => [
-                    'title' => "mi nota",
-                    'content' => "mi contenido",
-                    'favorite' => true
-                ]
-            ]
+            'title' => "mi nota",
+            'content' => "mi contenido",
+            'favorite' => true
         ]
     )->assertJsonApiValidationErrors('slug');
 });
@@ -86,15 +71,25 @@ it("can not create note content attribute is required", function (){
     \Pest\Laravel\postJson(
         route('api.notes.store'),
         [
-            'data' => [
-                'attributes' => [
-                    'title' => $title = "mi nota",
-                    'slug' => str($title)->slug()->toString() ,
-                    'favorite' => true
-                ]
-            ]
+            'title' => $title = "mi nota",
+            'slug' => str($title)->slug()->toString() ,
+            'favorite' => true
         ]
     )->assertJsonApiValidationErrors('content');
 });
 
+
+it('slug must be unique', function (){
+    $note = \App\Models\Note::factory()->create();
+
+    \Pest\Laravel\postJson(
+        route('api.notes.store'),
+        [
+            'title' => "my title",
+            'content' => "some content",
+            'slug' => $note->slug
+        ]
+    )->assertJsonApiValidationErrors('slug');
+
+});
 

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api\Note;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateRequest extends FormRequest
 {
@@ -23,15 +24,22 @@ class UpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:155',
-            'content' => 'required|string|max:1024',
-            'favorite' => 'nullable|int',
+            'data.attributes.title' => 'required|string|max:155',
+            'data.attributes.slug' => [
+                'required',
+                'alpha_dash',
+                'string',
+                'max:155',
+                Rule::unique('notes','slug')->ignore($this->route('note'))
+            ],
+            'data.attributes.content' => 'required|string|max:1024',
+            'data.attributes.favorite' => 'nullable|int',
         ];
     }
 
-    protected function prepareForValidation(): void
+    public function validated($key = null, $default = null)
     {
-
+        return parent::validated($key, $default)['data']['attributes'];
     }
 
 }

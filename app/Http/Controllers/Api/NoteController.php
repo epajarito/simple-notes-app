@@ -34,11 +34,7 @@ class NoteController extends Controller
      */
     public function store(StoreRequest $request)
     {
-        $note = Note::create([
-            'title' => $request->input('data.attributes.title'),
-            'content' => $request->input('data.attributes.content'),
-            'slug' => $request->input('data.attributes.slug'),
-        ]);
+        $note = Note::create($request->validated());
 
         return new NoteResource($note);
     }

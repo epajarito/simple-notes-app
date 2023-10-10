@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api\Note;
 
 use App\Models\Note;
+use App\Rules\Slug;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreRequest extends FormRequest
@@ -25,7 +26,13 @@ class StoreRequest extends FormRequest
     {
         return [
             'data.attributes.title' => 'required|string|max:110',
-            'data.attributes.slug' => 'required|string',
+            'data.attributes.slug' => [
+                'required',
+                'alpha_dash',
+                new Slug(),
+                'string',
+                'unique:notes,slug'
+            ],
             'data.attributes.content' => 'required|string|max:255',
             'data.attributes.favorite' => 'nullable|int|bool',
             'data.attributes.user_id' => 'nullable',
@@ -44,8 +51,8 @@ class StoreRequest extends FormRequest
             'slug' => $slug
         ]);
     }
-//    public function validated($key = null, $default = null)
-//    {
-//        return parent::validated($key, $default);
-//    }
+    public function validated($key = null, $default = null)
+    {
+        return parent::validated($key, $default)['data']['attributes'];
+    }
 }
