@@ -21,9 +21,9 @@ class NoteResource extends JsonResource
             'attributes' => [
                 'title' => $this->resource->title,
                 'content' => $this->resource->content,
-                'slug' => $this->resource->slug,
+                'slug' => (string)$this->resource->slug,
                 'is_favorite' => (bool)$this->resource->favorite,
-                'created_at' => $this->resource->created_at
+                'created_at' => (string)$this->resource->created_at
             ],
             'links' => [
                 'self' => route('api.notes.show', $this->resource)

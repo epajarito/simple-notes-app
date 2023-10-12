@@ -23,7 +23,7 @@ class IndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'sort' => 'nullable'
         ];
     }
 }

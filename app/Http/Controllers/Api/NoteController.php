@@ -10,6 +10,7 @@ use App\Http\Resources\Api\Note\NoteCollection;
 use App\Http\Resources\Api\Note\NoteResource;
 use App\Models\Note;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class NoteController extends Controller
 {
@@ -24,9 +25,18 @@ class NoteController extends Controller
 //            ->latest()
 //            ->paginate();
 
-        $notes = Note::all();
+        $notes = Note::allowedSorts(['title','content']);
 
-        return NoteCollection::make($notes);
+
+
+        return NoteCollection::make(
+            $notes->paginate(
+                $perPage = request('page.size', 15),
+                $columns = ['*'],
+                $pageName = 'page[number]',
+                $page = request('page.number', 1)
+            )->appends(request()->only('sort', 'page.size'))
+        );
     }
 
     /**

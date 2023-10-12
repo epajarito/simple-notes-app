@@ -22,7 +22,7 @@ it('can update post', function (){
                     'title' => $title = "title updated",
                     'content' => "content updated",
                     'is_favorite' => (bool)$note->favorite,
-                    'created_at' => $note->created_at,
+                    'created_at' => (string)$note->created_at,
                     'slug' => $note->slug
                 ],
                 'links' => [
@@ -53,8 +53,9 @@ it('slug must be unique', function (){
 
 it('slug only accepts letters numbers and alphanumeric string', function (){
 
-    \Pest\Laravel\postJson(
-        route('api.notes.store'),
+    $note = \App\Models\Note::factory()->create();
+    \Pest\Laravel\patchJson(
+        route('api.notes.update', $note),
         [
             'title' => "my title",
             'content' => "some content",
@@ -67,8 +68,9 @@ it('slug only accepts letters numbers and alphanumeric string', function (){
 
 it('slug must not contain underscores', function (){
 
-    \Pest\Laravel\postJson(
-        route('api.notes.store'),
+    $note = \App\Models\Note::factory()->create();
+    \Pest\Laravel\patchJson(
+        route('api.notes.update', $note),
         [
             'title' => "my title",
             'content' => "some content",
@@ -82,8 +84,9 @@ it('slug must not contain underscores', function (){
 
 it('slug must not start with dashes', function (){
 
-    \Pest\Laravel\postJson(
-        route('api.notes.store'),
+    $note = \App\Models\Note::factory()->create();
+    \Pest\Laravel\patchJson(
+        route('api.notes.update', $note),
         [
             'title' => "my title",
             'content' => "some content",
@@ -96,8 +99,9 @@ it('slug must not start with dashes', function (){
 
 it('slug must not ent with dashes', function (){
 
-    \Pest\Laravel\postJson(
-        route('api.notes.store'),
+    $note = \App\Models\Note::factory()->create();
+    \Pest\Laravel\patchJson(
+        route('api.notes.update', $note),
         [
             'title' => "my title",
             'content' => "some content",

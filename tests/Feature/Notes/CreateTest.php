@@ -34,7 +34,7 @@ it("can create note", function (){
                 'slug' => 'mi-titulo',
                 'content' => 'mi contenido',
                 'is_favorite' => (bool)$note->favorite,
-                'created_at' => $note->created_at
+                'created_at' => (string)$note->created_at
             ],
             'links' => [
                 'self' => route('api.notes.show', $note)
@@ -80,16 +80,77 @@ it("can not create note content attribute is required", function (){
 
 
 it('slug must be unique', function (){
-    $note = \App\Models\Note::factory()->create();
+
+    $firstNote = \App\Models\Note::factory()->create();
+    $secondNote = \App\Models\Note::factory()->create();
+
+
+    \Pest\Laravel\patchJson(
+        route('api.notes.update', $firstNote),
+        [
+            'title' => "my title",
+            'content' => "some content",
+            'slug' => $secondNote->slug
+        ]
+    )
+        ->assertJsonApiValidationErrors('slug');
+
+});
+
+it('slug only accepts letters numbers and alphanumeric string', function (){
 
     \Pest\Laravel\postJson(
         route('api.notes.store'),
         [
             'title' => "my title",
             'content' => "some content",
-            'slug' => $note->slug
+            'slug' => "%$&#$#"
         ]
-    )->assertJsonApiValidationErrors('slug');
+    )
+        ->assertJsonApiValidationErrors('slug');
 
+});
+
+it('slug must not contain underscores', function (){
+
+    \Pest\Laravel\postJson(
+        route('api.notes.store'),
+        [
+            'title' => "my title",
+            'content' => "some content",
+            'slug' => "with_undercores"
+        ]
+    )
+        ->assertSee("El valor del campo data.attributes.slug no debe contener guiones bajo.")
+        ->assertJsonApiValidationErrors('slug');
+
+});
+
+it('slug must not start with dashes', function (){
+
+    \Pest\Laravel\postJson(
+        route('api.notes.store'),
+        [
+            'title' => "my title",
+            'content' => "some content",
+            'slug' => "-starts-with-dashes"
+        ]
+    )
+        ->assertSee("El valor del campo data.attributes.slug no debe comenzar con guiones.")
+        ->assertJsonApiValidationErrors('slug');
+});
+
+it('slug must not ent with dashes', function (){
+
+    \Pest\Laravel\postJson(
+        route('api.notes.store'),
+        [
+            'title' => "my title",
+            'content' => "some content",
+            'slug' => "ends-with-dashes-"
+        ]
+    )
+        ->assertSee("El valor del campo data.attributes.slug no debe terminar con guiones.")
+        ->assertJsonApiValidationErrors('slug');
 });
 

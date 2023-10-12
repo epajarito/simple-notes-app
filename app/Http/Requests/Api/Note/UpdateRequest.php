@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\Note;
 
+use App\Rules\Slug;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -28,6 +29,7 @@ class UpdateRequest extends FormRequest
             'data.attributes.slug' => [
                 'required',
                 'alpha_dash',
+                new Slug(),
                 'string',
                 'max:155',
                 Rule::unique('notes','slug')->ignore($this->route('note'))
