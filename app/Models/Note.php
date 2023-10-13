@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,6 +29,15 @@ class Note extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+    public function scopeYear(Builder $query, string $value): Builder
+    {
+        return $query->whereYear('created_at', $value);
+    }
+
+    public function scopeMonth(Builder $query, string $value): Builder
+    {
+        return $query->whereMonth('created_at', $value);
     }
 
 

@@ -25,18 +25,12 @@ class NoteController extends Controller
 //            ->latest()
 //            ->paginate();
 
-        $notes = Note::allowedSorts(['title','content']);
+        $notes = Note::query()
+            ->allowedFilters(["title", "content", "year", "month"])
+            ->allowedSorts(['title','content'])
+            ->jsonPaginate();
 
-
-
-        return NoteCollection::make(
-            $notes->paginate(
-                $perPage = request('page.size', 15),
-                $columns = ['*'],
-                $pageName = 'page[number]',
-                $page = request('page.number', 1)
-            )->appends(request()->only('sort', 'page.size'))
-        );
+        return NoteCollection::make($notes);
     }
 
     /**

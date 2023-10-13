@@ -49,7 +49,7 @@ it('can paginate notes', function () {
     \PHPUnit\Framework\assertStringContainsString('page[number]=3', $nextLink);
 });
 
-it('can sort and paginate notes', function () {
+it('can paginate sorted notes', function () {
     \App\Models\Note::factory()->create(['title' => 'C title']);
     \App\Models\Note::factory()->create(['title' => 'A title']);
     \App\Models\Note::factory()->create(['title' => 'B title']);
@@ -80,4 +80,30 @@ it('can sort and paginate notes', function () {
     \PHPUnit\Framework\assertStringContainsString('sort=title', $lastLink);
     \PHPUnit\Framework\assertStringContainsString('sort=title', $prevLink);
     \PHPUnit\Framework\assertStringContainsString('sort=title', $nextLink);
+});
+
+it('can paginate filtered notes', function () {
+
+    \App\Models\Note::factory()->count(3)->create();
+    \App\Models\Note::factory()->create(['title' => 'C grade']);
+    \App\Models\Note::factory()->create(['title' => 'A grade']);
+    \App\Models\Note::factory()->create(['title' => 'B grade']);
+
+    $url = route('api.notes.index',[
+        'filter[title]' => 'grade',
+        'page' => [
+            'size' => 1,
+            'number' => 2
+        ]
+    ]);
+    $response = \Pest\Laravel\getJson($url);
+    $firstLink = urldecode($response->json('links.first'));
+    $lastLink = urldecode($response->json('links.last'));
+    $prevLink = urldecode($response->json('links.prev'));
+    $nextLink = urldecode($response->json('links.next'));
+
+    \PHPUnit\Framework\assertStringContainsString('filter[title]=grade', $firstLink);
+    \PHPUnit\Framework\assertStringContainsString('filter[title]=grade', $lastLink);
+    \PHPUnit\Framework\assertStringContainsString('filter[title]=grade', $prevLink);
+    \PHPUnit\Framework\assertStringContainsString('filter[title]=grade', $nextLink);
 });
