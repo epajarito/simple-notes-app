@@ -21,6 +21,12 @@ class Note extends Model
         'favorite'
     ];
 
+
+    public function getRouteKeyName(): string
+    {
+        return "slug";
+    }
+
     /**
      * Relationship with User model
      *
@@ -46,7 +52,7 @@ class Note extends Model
      *
      * @return string
     */
-    public function getModelTypeAttribute(): string
+    public function getResourceTypeAttribute(): string
     {
         $model = Str::of(self::class)
             ->explode('\\')

@@ -28,6 +28,7 @@ class NoteController extends Controller
         $notes = Note::query()
             ->allowedFilters(["title", "content", "year", "month"])
             ->allowedSorts(['title','content'])
+            ->sparseFields()
             ->jsonPaginate();
 
         return NoteCollection::make($notes);
@@ -46,8 +47,13 @@ class NoteController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Note $note)
+    public function show($note)
     {
+        $note = Note::query()
+            ->where('slug', $note)
+            ->sparseFields()
+            ->firstOrFail();
+
 //        $this->authorize('view', $note);
         return new NoteResource($note);
     }

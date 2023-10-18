@@ -53,4 +53,25 @@ class JsonApiQueryBuilder
             return $this;
         };
     }
+
+    public function sparseFields(): Closure
+    {
+        return function (){
+            /** @var Builder $this */
+            if( request()->isNotFilled('fields') ){
+                return  $this;
+            }
+
+            $resourceType = $this->model->resource_type ?? $this->model->getTable();
+
+            $fields = explode(",", request("fields.$resourceType"));
+
+            $routeKeyName = $this->model->getRouteKeyName();
+            if(! in_array($routeKeyName, $fields)){
+                $fields[] = $routeKeyName;
+            }
+
+            return $this->addSelect($fields);
+        };
+    }
 }
