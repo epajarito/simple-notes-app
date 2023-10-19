@@ -13,22 +13,13 @@ it('can update post', function (){
     )
         ->assertOk();
 
-    $response->assertExactJson(
+    $response->assertJsonApiResource($note,
         [
-            'data' => [
-                'type' => 'notes',
-                'id' => (string)$note->id,
-                'attributes' => [
-                    'title' => $title = "title updated",
-                    'content' => "content updated",
-                    'is_favorite' => (bool)$note->favorite,
-                    'created_at' => (string)$note->created_at,
-                    'slug' => $note->slug
-                ],
-                'links' => [
-                    'self' => route('api.notes.show', $note)
-                ]
-            ]
+            'title' => "title updated",
+            'content' => "content updated",
+            'is_favorite' => (bool)$note->favorite,
+            'created_at' => (string)$note->created_at,
+            'slug' => $note->slug
         ]
     );
 });

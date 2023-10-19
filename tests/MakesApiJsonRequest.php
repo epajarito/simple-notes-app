@@ -35,6 +35,44 @@ trait MakesApiJsonRequest
     protected function setUp(): void
     {
         parent::setUp();
+        TestResponse::macro('assertJsonApiResource', function ($model, $attribute){
+            /** @var TestResponse $this */
+            $this->assertJson([
+                'data' => [
+                    'type' => $model->resource_type,
+                    'id' => (string)$model->id,
+                    'attributes' => $attribute,
+                    'links' => [
+                        'self' => route("api.{$model->resource_type}.show", $model)
+                    ]
+                ]
+            ])->assertHeader(
+                'Location',
+                route("api.{$model->resource_type}.show", $model)
+            );
+        });
+
+        TestResponse::macro('assertJsonApiResourceCollection', function ($models, $attributesKeys){
+            /** @var TestResponse $this */
+
+            $this->assertJsonStructure([
+                'data' => [
+                    '*' => [
+                        'attributes' =>  $attributesKeys
+                    ]
+                ]
+            ]);
+
+            foreach ($models as $model){
+                $this->assertJsonFragment([
+                    'id' => (string)$model->id,
+                    'type' => $model->resource_type,
+                    'links' => [
+                        'self' => route("api.{$model->resource_type}.show", $model)
+                    ]
+                ]);
+            }
+        });
 
         TestResponse::macro('assertJsonApiValidationErrors', function ($attribute){
             /** @var TestResponse $this */

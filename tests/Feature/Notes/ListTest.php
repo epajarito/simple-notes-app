@@ -35,50 +35,8 @@ it('can fetch all notes', function () {
 
     $response = \Pest\Laravel\getJson(route('api.notes.index'));
 
-    $response->assertJson([
-        'data' => [
-            [
-                'id' => (string)$notes[0]->id,
-                'type' => 'notes',
-                'attributes' => [
-                    'title' => $notes[0]->title,
-                    'content' => $notes[0]->content,
-                    'slug' => (string)$notes[0]->slug,
-                    'is_favorite' => (bool)$notes[0]->favorite,
-                    'created_at' => (string)$notes[0]->created_at
-                ],
-                'links' => [
-                    'self' => route('api.notes.show', $notes[0])
-                ]
-            ],
-            [
-                'id' => (string)$notes[1]->id,
-                'type' => 'notes',
-                'attributes' => [
-                    'title' => $notes[1]->title,
-                    'content' => $notes[1]->content,
-                    'slug' => (string)$notes[1]->slug,
-                    'is_favorite' => (bool)$notes[1]->favorite,
-                    'created_at' => (string)$notes[1]->created_at
-                ],
-                'links' => [
-                    'self' => route('api.notes.show', $notes[1])
-                ]
-            ],
-            [
-                'id' => (string)$notes[2]->id,
-                'type' => 'notes',
-                'attributes' => [
-                    'title' => $notes[2]->title,
-                    'content' => $notes[2]->content,
-                    'slug' => (string)$notes[2]->slug,
-                    'is_favorite' => (bool)$notes[2]->favorite,
-                    'created_at' => (string)$notes[2]->created_at
-                ],
-                'links' => [
-                    'self' => route('api.notes.show', $notes[2])
-                ]
-            ]
-        ]
-    ]);
+    $response->assertJsonApiResourceCollection(
+        $notes,
+        ['title', 'content', 'slug', 'is_favorite', 'created_at']
+    );
 });

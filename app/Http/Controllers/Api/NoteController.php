@@ -10,6 +10,8 @@ use App\Http\Resources\Api\Note\NoteCollection;
 use App\Http\Resources\Api\Note\NoteResource;
 use App\Models\Note;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
 
 class NoteController extends Controller
@@ -18,7 +20,7 @@ class NoteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(IndexRequest $request)
+    public function index(IndexRequest $request): AnonymousResourceCollection
     {
 //        $notes = Note::query()
 //            ->whereBelongsTo(auth()->user())
@@ -31,13 +33,13 @@ class NoteController extends Controller
             ->sparseFields()
             ->jsonPaginate();
 
-        return NoteCollection::make($notes);
+        return NoteResource::collection($notes);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreRequest $request)
+    public function store(StoreRequest $request): JsonResource
     {
         $note = Note::create($request->validated());
 

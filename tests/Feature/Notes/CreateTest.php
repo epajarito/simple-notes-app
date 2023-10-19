@@ -20,27 +20,16 @@ it("can create note", function (){
 
     $note = \App\Models\Note::first();
 
-    $response->assertHeader(
-        'Location',
-        route('api.notes.show', $note)
-    );
-
-    $response->assertExactJson([
-        'data' => [
-            'type' => 'notes',
-            'id' => (string)$note->id,
-            'attributes' => [
-                'title' => "mi titulo",
-                'slug' => 'mi-titulo',
-                'content' => 'mi contenido',
-                'is_favorite' => (bool)$note->favorite,
-                'created_at' => (string)$note->created_at
-            ],
-            'links' => [
-                'self' => route('api.notes.show', $note)
-            ]
+    $response->assertJsonApiResource(
+        $note,
+        [
+            'title' => "mi titulo",
+            'slug' => 'mi-titulo',
+            'content' => 'mi contenido',
+            'is_favorite' => (bool)$note->favorite,
+            'created_at' => (string)$note->created_at
         ]
-    ]);
+    );
 
 
 });

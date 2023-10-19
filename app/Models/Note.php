@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasAttributes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Note extends Model
 {
     use HasFactory,
-        SoftDeletes;
+        SoftDeletes,
+        HasAttributes;
 
     protected $fillable = [
         'title',
@@ -46,18 +48,4 @@ class Note extends Model
         return $query->whereMonth('created_at', $value);
     }
 
-
-    /**
-     * Attribute to get model type for resource
-     *
-     * @return string
-    */
-    public function getResourceTypeAttribute(): string
-    {
-        $model = Str::of(self::class)
-            ->explode('\\')
-            ->last();
-
-        return str($model)->lower()->plural();
-    }
 }
