@@ -6,7 +6,10 @@ use App\Http\Controllers\Api\Auth\{
     LoginController,
     RegisterController
 };
-use App\Http\Controllers\Api\NoteController;
+use App\Http\Controllers\Api\{
+    NoteController,
+    CategoryController
+};
 
 /*
 |--------------------------------------------------------------------------
@@ -32,3 +35,4 @@ Route::prefix('auth')->group(function (){
 //    ->middleware('auth:sanctum');
 
 Route::apiResource('notes', NoteController::class)->names('api.notes');
+Route::apiResource('categories', CategoryController::class)->names('api.categories');

@@ -63,7 +63,7 @@ class NoteController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateRequest $request, Note $note)
+    public function update(StoreRequest $request, Note $note)
     {
 //        $this->authorize('update', $note);
         $note->update($request->validated());

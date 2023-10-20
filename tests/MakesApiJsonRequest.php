@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\JsonApi\Document;
 use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Assert as PHPUnit;
 use PHPUnit\Framework\ExpectationFailedException;
@@ -21,15 +22,11 @@ trait MakesApiJsonRequest
         $type = (string)str($uri)->after('api/')->before('/');
         $id = (string)str($path)->after($type)->replace('/', '');
 
-        return [
-            'data' => array_filter(
-                [
-                    'type' => $type,
-                    'id' => $id,
-                    'attributes' => $data
-                ]
-            )
-        ];
+        return Document::type($type)
+            ->id($id)
+            ->attributes($data)
+            ->relationships($data['_relationships'] ?? [])
+            ->toArray();
     }
 
     protected function setUp(): void
@@ -50,6 +47,8 @@ trait MakesApiJsonRequest
                 'Location',
                 route("api.{$model->resource_type}.show", $model)
             );
+
+            return $this;
         });
 
         TestResponse::macro('assertJsonApiResourceCollection', function ($models, $attributesKeys){
@@ -77,9 +76,12 @@ trait MakesApiJsonRequest
         TestResponse::macro('assertJsonApiValidationErrors', function ($attribute){
             /** @var TestResponse $this */
 
-            $pointer = str($attribute)->startsWith('data')
-                ? "/". str_replace('.', '/', $attribute)
-                :  "/data/attributes/{$attribute}";
+            $pointer = "/data/attributes/{$attribute}";
+            if ( str($attribute)->startsWith('data') ){
+                $pointer = "/". str_replace('.', '/', $attribute);
+            }else if (str($attribute)->startsWith('relationships')){
+                $pointer = "/data/" . str_replace('.', '/', $attribute) . "/data/id";
+            }
 
             try {
                 $this->assertJsonFragment([

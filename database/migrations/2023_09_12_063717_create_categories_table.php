@@ -11,15 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('notes', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id();
-//            $table->foreignIdFor(\App\Models\User::class)->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(\App\Models\Category::class)->constrained()->cascadeOnDelete();
-            $table->string('title');
+            $table->string('name');
             $table->string('slug')->unique();
-            $table->longText('content');
-            $table->tinyInteger('favorite')->default(0);
-            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -29,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('notes');
+        Schema::dropIfExists('categories');
     }
 };

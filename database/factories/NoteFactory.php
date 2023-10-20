@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -22,7 +23,8 @@ class NoteFactory extends Factory
             'content' => fake()->paragraphs(5, asText: true),
             'favorite' => rand(0,1),
             'created_at' => $date = fake()->dateTimeBetween('-3 months', '-1 week'),
-            'updated_at' => $date
+            'updated_at' => $date,
+            'category_id' => Category::factory()
         ];
     }
 }

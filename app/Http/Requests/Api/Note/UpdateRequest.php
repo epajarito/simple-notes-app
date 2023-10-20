@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\Note;
 
+use App\Models\Category;
 use App\Rules\Slug;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -36,12 +37,23 @@ class UpdateRequest extends FormRequest
             ],
             'data.attributes.content' => 'required|string|max:1024',
             'data.attributes.favorite' => 'nullable|int',
+            'data.relationships' => [],
         ];
     }
 
     public function validated($key = null, $default = null)
     {
-        return parent::validated($key, $default)['data']['attributes'];
+        $data = parent::validated()['data'];
+        $attributes = $data['attributes'];
+
+        if( isset($data['relationships']) ) {
+            $relationships = $data['relationships'];
+            $categorySlug = $relationships['category']['data']['id'];
+            $category = Category::whereSlug($categorySlug)->first();
+            $attributes['category_id'] = $category->id;
+        }
+
+        return $attributes;
     }
 
 }

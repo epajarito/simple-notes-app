@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests\Api\Note;
 
+use App\Models\Category;
 use App\Models\Note;
 use App\Rules\Slug;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreRequest extends FormRequest
 {
@@ -30,12 +32,15 @@ class StoreRequest extends FormRequest
                 'required',
                 'alpha_dash',
                 new Slug(),
-                'string',
-                'unique:notes,slug'
+                Rule::unique('notes', 'slug')->ignore($this->route('note'))
             ],
             'data.attributes.content' => 'required|string|max:255',
             'data.attributes.favorite' => 'nullable|int|bool',
             'data.attributes.user_id' => 'nullable',
+            'data.relationships.category.data.id' => [
+                Rule::requiredIf(! $this->route('note')),
+                Rule::exists('categories', 'slug'),
+            ]
         ];
     }
 
@@ -53,6 +58,16 @@ class StoreRequest extends FormRequest
     }
     public function validated($key = null, $default = null)
     {
-        return parent::validated($key, $default)['data']['attributes'];
+        $data = parent::validated()['data'];
+        $attributes = $data['attributes'];
+
+        if ( isset($data['relationships']) ) {
+            $relationships = $data['relationships'];
+            $categorySlug = $relationships['category']['data']['id'];
+            $category = Category::whereSlug($categorySlug)->first();
+            $attributes['category_id'] = $category->id;
+        }
+
+        return $attributes;
     }
 }

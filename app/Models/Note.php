@@ -20,7 +20,8 @@ class Note extends Model
         'slug',
         'content',
         'user_id',
-        'favorite'
+        'favorite',
+        'category_id'
     ];
 
 

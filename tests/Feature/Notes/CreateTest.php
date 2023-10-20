@@ -6,13 +6,17 @@ uses(RefreshDatabase::class);
 
 it("can create note", function (){
 
-    $response = \Pest\Laravel\postJson(
+    $category = \App\Models\Category::factory()->create();
+    $response = $this->postJson(
         route('api.notes.store'),
         [
             'title' => $title = "mi titulo",
             'slug' => str($title)->slug()->toString(),
             'content' => "mi contenido",
-            'favorite' => 1
+            'favorite' => 1,
+            '_relationships' => [
+                'category' => $category
+            ]
         ]
     )
         ->assertCreated()
@@ -143,3 +147,28 @@ it('slug must not ent with dashes', function (){
         ->assertJsonApiValidationErrors('slug');
 });
 
+it("category relationship is required", function (){
+    $this->postJson(
+        route('api.notes.store'),
+        [
+            'title' => $title = fake()->sentence,
+            'slug' => str($title)->slug()->toString(),
+            'content' => fake()->paragraph
+        ]
+    )->assertJsonApiValidationErrors('relationships.category');
+});
+
+it("category must exist in database", function (){
+
+    $this->postJson(
+        route('api.notes.store'),
+        [
+            'title' => $title = fake()->sentence,
+            'slug' => str($title)->slug()->toString(),
+            'content' => fake()->paragraph,
+            '_relationships' => [
+                'category' => \App\Models\Category::factory()->make()
+            ]
+        ]
+    )->assertJsonApiValidationErrors('relationships.category');
+});
