@@ -12,7 +12,7 @@ it('can create json api document', function () {
     $document = Document::type('articles')
         ->id('article-id')
         ->attributes(['title' => 'Article title'])
-        ->relationships([
+        ->relationshipsData([
             'category' => $category
         ])
         ->toArray();

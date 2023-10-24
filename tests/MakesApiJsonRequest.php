@@ -25,7 +25,7 @@ trait MakesApiJsonRequest
         return Document::type($type)
             ->id($id)
             ->attributes($data)
-            ->relationships($data['_relationships'] ?? [])
+            ->relationshipsData($data['_relationships'] ?? [])
             ->toArray();
     }
 
@@ -37,7 +37,7 @@ trait MakesApiJsonRequest
             $this->assertJson([
                 'data' => [
                     'type' => $model->resource_type,
-                    'id' => (string)$model->id,
+                    'id' => $model->slug,
                     'attributes' => $attribute,
                     'links' => [
                         'self' => route("api.{$model->resource_type}.show", $model)
@@ -64,7 +64,7 @@ trait MakesApiJsonRequest
 
             foreach ($models as $model){
                 $this->assertJsonFragment([
-                    'id' => (string)$model->id,
+                    'id' => $model->slug,
                     'type' => $model->resource_type,
                     'links' => [
                         'self' => route("api.{$model->resource_type}.show", $model)
@@ -114,6 +114,26 @@ trait MakesApiJsonRequest
             $this
                 ->assertHeader('content-type', 'application/vnd.api+json')
                 ->assertStatus(422);
+        });
+
+        TestResponse::macro('assertJsonApiRelationshipLinks', function ($model, $relations){
+            /** @var TestResponse $this */
+            foreach ($relations as $relation){
+                $this->assertJson([
+                    'data' => [
+                        'relationships' => [
+                            'category' => [
+                                'links' => [
+                                    'self' => route("api.{$model->resource_type}.relationships.{$relation}", $model),
+                                    'related' => route("api.{$model->resource_type}.{$relation}", $model),
+                                ]
+                            ]
+                        ]
+                    ]
+                ]);
+            }
+
+            return $this;
         });
     }
 

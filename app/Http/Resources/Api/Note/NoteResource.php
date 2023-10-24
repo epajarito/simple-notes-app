@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Api\Note;
 
+use App\Http\Resources\Api\Category\CategoryResource;
 use App\JsonApi\Traits\JsonApiResource;
 use App\Models\Note;
 use Illuminate\Http\Request;
@@ -20,6 +21,18 @@ class NoteResource extends JsonResource
             'slug' => (string)$this->resource->slug,
             'is_favorite' => (bool)$this->resource->favorite,
             'created_at' => (string)$this->resource->created_at
+        ];
+    }
+
+    public function getRelationshipLinks(): array
+    {
+        return ['category'];
+    }
+
+    public function getIncludes(): array
+    {
+        return [
+            CategoryResource::make($this->resource->category)
         ];
     }
 }

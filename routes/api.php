@@ -36,3 +36,9 @@ Route::prefix('auth')->group(function (){
 
 Route::apiResource('notes', NoteController::class)->names('api.notes');
 Route::apiResource('categories', CategoryController::class)->names('api.categories');
+
+Route::get('notes/{note}/relationships/category', fn()=> 'todo')
+    ->name('api.notes.relationships.category');
+
+Route::get('notes/{note}/category', fn()=> 'todo')
+    ->name('api.notes.category');

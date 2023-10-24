@@ -39,6 +39,11 @@ class Note extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
     public function scopeYear(Builder $query, string $value): Builder
     {
         return $query->whereYear('created_at', $value);

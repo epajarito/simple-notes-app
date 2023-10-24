@@ -12,22 +12,14 @@ it('can fetch single note', function () {
     )
         ->assertOk()
         ->assertStatus(200)
-        ->assertExactJson([
-            'data' => [
-                'id' => (string)$note->id,
-                'type' => 'notes',
-                'attributes' => [
-                    'title' => $note->title,
-                    'content' => $note->content,
-                    'slug' => $note->slug,
-                    'is_favorite' => (bool)$note->favorite,
-                    'created_at' => (string)$note->created_at
-                ],
-                'links' => [
-                    'self' => route('api.notes.show', $note)
-                ]
-            ]
-        ]);
+        ->assertJsonApiResource($note,[
+            'title' => $note->title,
+            'content' => $note->content,
+            'slug' => $note->slug,
+            'is_favorite' => (bool)$note->favorite,
+            'created_at' => (string)$note->created_at
+        ])
+        ->assertJsonApiRelationshipLinks($note, ['category']);
 });
 
 it('can fetch all notes', function () {

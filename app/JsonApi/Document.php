@@ -39,14 +39,24 @@ class Document extends Collection
         return $this;
     }
 
-    public function relationships(array $relationships): Document
+    public function relationshipsData(array $relationships): Document
     {
         foreach ($relationships as $key => $relationship){
-            $this->items['data']['relationships'][$key] = [
-                'data' => [
-                    'type' => $relationship->resource_type,
-                    'id' => $relationship->getRouteKey()
-                ]
+            $this->items['data']['relationships'][$key]['data'] = [
+                'type' => $relationship->resource_type,
+                'id' => $relationship->getRouteKey()
+            ];
+        }
+
+        return $this;
+    }
+
+    public function relationshipsLinks(array $relationships): Document
+    {
+        foreach ($relationships as $key){
+            $this->items['data']['relationships'][$key]['links'] = [
+                'self' => route("api.{$this->items['data']['type']}.relationships.{$key}", $this->items['data']['id']),
+                'related' => route("api.{$this->items['data']['type']}.{$key}", $this->items['data']['id']),
             ];
         }
 
